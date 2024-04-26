@@ -1,0 +1,36 @@
+name: Test app image
+
+on:
+  workflow_run:
+    workflows: [Containerize and publish app image]
+    types:
+      - completed
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  test-image:
+    
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Run image
+        env:
+          STRIPE_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+        run: |
+          podman secret create --env=true stripe-secret STRIPE_KEY
+          make run
+      - name: Test the app 
+        run: |
+          sleep 5
+          curl 0.0.0.0:5000 | grep -q Johans
+#      - name: Setup tmate session
+#        if: ${{ failure() }}
+#        uses: mxschmitt/action-tmate@v3

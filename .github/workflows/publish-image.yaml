@@ -1,4 +1,3 @@
-#
 name: Containerize and publish app image
 
 # Configures this workflow to run every time a change is pushed to the branch called `release`.
@@ -29,7 +28,8 @@ jobs:
           podman login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ${{ env.REGISTRY }}
       - name: Build Image
         run: |
-          podman build -t ${{ env.IMAGE_NAME }}:dev .
+          make build
       - name: Push Image
         run: |
-          podman push ${{ env.IMAGE_NAME }}:dev ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev
+          make push 
+
