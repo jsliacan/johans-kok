@@ -1,5 +1,9 @@
 # Johans Kök
 
+## Azure related
+
+[Passing env vars to the app](https://learn.microsoft.com/en-us/azure/developer/python/walkthrough-tutorial-authentication-05#environment-variables)
+
 ## Run the container
 
 Assuming `STRIPE_KEY` stores the Stripe secret key.
