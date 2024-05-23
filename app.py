@@ -7,19 +7,31 @@ stripe.api_key = os.environ['STRIPE_SECRET_KEY']
 
 
 products = {
-    'vegetarian': {
-        'name': 'Salad',
+    'veg': {
+        'name': 'Veg',
         'price': 10000, # in cents (int)
     },
-    'carnivorous': {
-        'name': 'Steak',
-        'price': 11000,
+    'nonveg': {
+        'name': 'Non-veg',
+        'price': 10000,
+    },
+}
+
+pickups = {
+    'A': {
+        'name': 'Auditorium',
+    },
+    'B': {
+        'name': 'Boulangerie',
+    },
+    'C': {
+        'name': 'Cinema',
     },
 }
 
 @app.route('/')
 def index():
-    return render_template('index.html', products=products)
+    return render_template('index.html', products=products, pickups=pickups)
 
 @app.route('/order/success')
 def success():
@@ -31,19 +43,21 @@ def cancel():
     return render_template('cancel.html')
 
 # Stripe order form
-@app.route('/order/<product_id>', methods=['POST'])
-def order(product_id):
-    if product_id not in products:
-        abort(404)
+@app.route('/place_order', methods=['POST'])
+def make_order():
+    data = request.form
 
     checkout_session = stripe.checkout.Session.create(
         line_items=[
             {
                 'price_data': {
                     'product_data': {
-                        'name': products[product_id]['name'],
+                        'name': products[data['meal']]['name'],
+                        'metadata': {
+                            'location': pickups[data['pickup']]['name'],
+                        }
                     },
-                    'unit_amount': products[product_id]['price'],
+                    'unit_amount': products[data['meal']]['price'],
                     'currency': 'sek',
                 },
                 'quantity': 1,
@@ -53,5 +67,10 @@ def order(product_id):
         mode='payment',
         success_url=request.host_url + 'order/success',
         cancel_url=request.host_url + 'order/cancel',
+        payment_intent_data={
+            # description is displayed with each payment in the list of Stripe Transactions (seller's side)
+            'description': pickups[data['pickup']]['name']+", "+products[data['meal']]['name'],
+        },
+        customer_email=data['email'],
     )
     return redirect(checkout_session.url)
