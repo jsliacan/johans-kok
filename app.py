@@ -63,7 +63,7 @@ def make_order():
                 'quantity': 1,
             },
         ],
-        payment_method_types=['card'],
+        payment_method_types=['card', 'swish'],
         mode='payment',
         success_url=request.host_url + 'order/success',
         cancel_url=request.host_url + 'order/cancel',
