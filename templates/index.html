@@ -9,43 +9,53 @@
     <title>Johans kök</title>
   </head>
   <body>
-    <h1 class="text-center py-5">Johans Kök</h1>
-      <div class="row">
-        <h2 class="text-center">Order details</h2> 
-        <div class="col-md-4"></div> 
-        <div class="col-md-4"> 
+      <div class="container">
+        <div class="row">
+          <h1 class="text-center py-5">Johans Kök</h1>
+        </div>
+        <div class="row">
+          <div class="col-xs-4">
+            <li>Order before 9am on the same day you wish to have your meal.</li>
+            <li>Retain your confirmation email to claim your meal at the location you pick.</li>
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <h2 class="text-center">Order details</h2> 
+          <div class="col-xs-4"> 
             <form action="{{ url_for('make_order')}}" method="POST"> 
+              <div class="col-xs-4" name="customer-email">
+              <label for="email" class="form-label"><b>E-mail</b></label> 
+              <input name="email" type="text" class="form-control" id="emailfield">
+              </div>
+              <br />
+              <label for="meal-choice" class="label"><b>Meal choice</b></label>
+              <br />
+              {% for id in products %}
+              <div class="form-check form-check-inline py-3" name="meal-choice"> 
+                  <input class="form-check-input" type="radio" name="meal" value="{{ id }}" checked> 
+                  <label class="form-check-label" for="meal"><b>{{ products[id].name }}</b> ({{ "%.2f"|format(products[id].price / 100) }} kr)</label> 
+              </div>
+              {% endfor %}
+              <div></div>
+              <label for="pickups" class="lable"><b>Pick-up location</b></label>
+              <br />
+              {% for id in pickups %}
+              <div class="form-check form-check-inline py-3" name="pickups"> 
+                  <input class="form-check-input" type="radio" name="pickup" value="{{ id }}" checked> 
+                  <label class="form-check-label" for="pickup"><b>{{ pickups[id].name }}</b></label> 
+              </div>
+              {% endfor %}
 
-                <div class="col-md-9" name="customer-email">
-                <label for="email" class="form-label"><b>E-mail</b></label> 
-                <input name="email" type="text" class="form-control" id="emailfield">
-                </div>
-                <br />
-                <label for="meal-choice" class="label"><b>Meal choice</b></label>
-                <br />
-                {% for id in products %}
-                <div class="form-check form-check-inline py-3" name="meal-choice"> 
-                    <input class="form-check-input" type="radio" name="meal" value="{{ id }}" checked> 
-                    <label class="form-check-label" for="meal"><b>{{ products[id].name }}</b> ({{ "%.2f"|format(products[id].price / 100) }} kr)</label> 
-                </div>
-                {% endfor %}
-                <div></div>
-                <label for="pickups" class="lable"><b>Pick-up location</b></label>
-                <br />
-                {% for id in pickups %}
-                <div class="form-check form-check-inline py-3" name="pickups"> 
-                    <input class="form-check-input" type="radio" name="pickup" value="{{ id }}" checked> 
-                    <label class="form-check-label" for="pickup"><b>{{ pickups[id].name }}</b></label> 
-                </div>
-                {% endfor %}
-
-                <div>
-                  <button type="submit" class="btn btn-primary">Pay</button> 
-                </div>
+              <div>
+                <button type="submit" class="btn btn-primary">To payment</button> 
+              </div>
             </form> 
+          </div> 
+          <div class="col-xs-4"></div> 
         </div> 
-        <div class="col-md-4"></div> 
-      </div> 
+
+      </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
