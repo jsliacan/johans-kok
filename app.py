@@ -1,3 +1,4 @@
+import datetime
 import os
 from flask import Flask, render_template, abort, redirect, request
 import stripe
@@ -42,6 +43,10 @@ def success():
 def cancel():
     return render_template('cancel.html')
 
+@app.route('/late')
+def late():
+    return render_template('late.html')
+
 # Stripe order form
 @app.route('/place_order', methods=['POST'])
 def make_order():
@@ -73,4 +78,7 @@ def make_order():
         },
         customer_email=data['email'],
     )
-    return redirect(checkout_session.url)
+    dt = datetime.datetime.now()
+    if dt.hour < 9:
+        return redirect(checkout_session.url)
+    return redirect(request.host_url + 'late')
